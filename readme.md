@@ -1,0 +1,98 @@
+--- |modules
+	|--	network
+	|	|--	vpc
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|--	services
+	|	|--	appserver
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|		|--	user-data.sh
+	|--	static-web
+	|	|--	s3
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf		
+	|--	data-stores
+	| 	|--	mysql
+	| 	  	|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|--	micro-services
+	|	|--	ecs
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|--	iam
+	|	|--	usersls
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|	|--	roles
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|-- api
+	|	|--	api-gw
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|	|--	lambda
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+	|	|--	codebuild
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf
+
+
+
+
+
+-------
+
+
+global
+	s3-state
+		backend.tf
+		dynamodb.tf
+		main.tf
+		outputs.tf
+		vars.tfvars.tf
+		provider.tf
+----------------------
+enviorement
+	network
+		vpc
+			main.tf
+			outputs.tf
+	services
+		webserver
+			main.tf
+			outputs.tf
+
+	static-web
+		s3
+			main.tf
+			outputs.tf
+	data-stores
+  		mysql
+  	  		main.tf
+			outputs.tf
+	micro-services
+		ecs
+			main.tf
+			outputs.tf
+	iam
+		users
+			main.tf
+			outputs.tf
+		roles
+			main.tf
+			outputs.tf
+
+
+
