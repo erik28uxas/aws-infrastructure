@@ -50,11 +50,7 @@
 
 
 
-
-
--------
-
-
+----------------------------
 global
 	s3-state
 		backend.tf
@@ -63,36 +59,43 @@ global
 		outputs.tf
 		vars.tfvars.tf
 		provider.tf
-----------------------
-enviorement
-	network
-		vpc
-			main.tf
-			outputs.tf
-	services
-		webserver
-			main.tf
-			outputs.tf
-
-	static-web
-		s3
-			main.tf
-			outputs.tf
-	data-stores
-  		mysql
-  	  		main.tf
-			outputs.tf
-	micro-services
-		ecs
-			main.tf
-			outputs.tf
-	iam
-		users
-			main.tf
-			outputs.tf
-		roles
-			main.tf
-			outputs.tf
-
-
-
+----------------------------
+--- |enviorement
+	|--	network
+	|	|--	vpc
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|--	services
+	|	|--	appserver
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|--	static-web
+	|	|--	s3
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|--	data-stores
+	| 	|--	mysql
+	| 	  	|--	main.tf
+	|		|--	outputs.tf
+	|--	micro-services
+	|	|--	ecs
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|--	iam
+	|	|--	usersls
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|	|--	roles
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|-- api
+	|	|--	api-gw
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|	|--	lambda
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|	|--	codebuild
+	|		|--	main.tf
+	|		|--	outputs.tf
+	|		|--	vars.tf	

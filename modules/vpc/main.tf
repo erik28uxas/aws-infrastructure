@@ -6,11 +6,12 @@ locals {
   nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length
   
   # Use `local.vpc_id` to give a hint to Terraform that subnets should be deleted before secondary CIDR blocks can be free!
-  vpc_id = try(aws_vpc_ipv4_cidr_block_association.this[0].vpc_id, aws_vpc.main_vpc[0].id, "")
+  vpc_id = try(aws_vpc_ipv4_cidr_block_association.main[0].vpc_id, aws_vpc.main_vpc[0].id, "")
   
   create_vpc = var.create_vpc
 }
 
+# ========  VPC  ========
 resource "aws_vpc" "main_vpc" {
   count = local.create_vpc ? 1 : 0
 
@@ -26,7 +27,7 @@ resource "aws_vpc" "main_vpc" {
   )
 }
 
-resource "aws_vpc_ipv4_cidr_block_association" "this" {
+resource "aws_vpc_ipv4_cidr_block_association" "main" {
   count = local.create_vpc && length(var.secondary_cidr_blocks) > 0 ? length(var.secondary_cidr_blocks) : 0
 
   # Do not turn this into `local.vpc_id`
