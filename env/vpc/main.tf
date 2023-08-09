@@ -9,6 +9,14 @@ terraform {
   }
 }
 
+terraform {
+  backend "s3" {
+    bucket = "eg-aws-infrastructure-remote-state-tf"
+    key = "env/network/vpc-main"
+    region = "us-west-2"
+  }
+}
+
 provider "aws" {
     region = local.region
 }
@@ -24,7 +32,7 @@ locals {
 
 
 module "vpc" {
-  source = "/home/erikgoul/Documents/Terraform/vpc_module_step/module"
+  source = "/home/erikgoul/Documents/Terraform_infra/aws-infrastructure/modules/vpc"
 
 
   vpc_cidr = "10.0.0.0/16"
