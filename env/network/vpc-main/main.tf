@@ -32,7 +32,7 @@ locals {
 
 
 module "vpc" {
-  source = "/home/erikgoul/Documents/Terraform_infra/aws-infrastructure/modules/network/vpc"
+  source = "/home/erikgoul/Documents/Terraform_infra/aws-infrastructure/modules/network/vpc-main"
 
 
   vpc_cidr = "10.0.0.0/16"
