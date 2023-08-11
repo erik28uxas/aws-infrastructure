@@ -1,8 +1,13 @@
 locals {
   max_subnet_length = max(
     length(var.private_subnet_cidrs),
-    # length(var.database_subnets),
+    length(var.database_subnets),
   )
+
+  len_private_subnets  = max(length(var.private_subnet_cidrs))
+  len_public_subnets   = max(length(var.public_subnet_cidrs))
+  len_database_subnets = max(length(var.database_subnets))
+
   nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length
   
   # Use `local.vpc_id` to give a hint to Terraform that subnets should be deleted before secondary CIDR blocks can be free!
@@ -123,7 +128,7 @@ resource "aws_subnet" "public_subnets" {
 # =========    NACL =========
 
 resource "aws_network_acl" "public" {
-  count = length(var.public_subnet_cidrs)
+  count = local.create_public_subnets && var.public_dedicated_network_acl ? 1 : 0
 
   vpc_id     = local.vpc_id
   subnet_ids = aws_subnet.public_subnets[*].id
@@ -169,12 +174,8 @@ resource "aws_network_acl_rule" "public_outbound" {
 
 
 # ========  Private Subnets  ========
-# locals {
-#   create_private_subnets = local.create_vpc && local.len_private_subnets > 0
-# }
-
 locals {
-  create_private_subnets = local.create_vpc && length(var.private_subnets_cidr_blocks) > 0
+  create_private_subnets = local.create_vpc && local.len_private_subnets > 0
 }
 
 resource "aws_subnet" "private_subnets" {
@@ -199,7 +200,7 @@ resource "aws_subnet" "private_subnets" {
 }
 
 locals {
-  create_private_network_acl = length(var.private_subnet_cidrs) && var.private_dedicated_network_acl
+  create_private_network_acl = local.create_private_subnets && var.private_dedicated_network_acl
 }
 
 resource "aws_network_acl" "private" {
