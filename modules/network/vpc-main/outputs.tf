@@ -11,7 +11,6 @@ output "vpc_cidr" {
 output "igw_id" {
   description = "The ID of the Internet Gateway"
   value       = try(aws_internet_gateway.vpc_gw[0].id, "")
-  # value       = aws_internet_gateway.vpc_gw.id
 }
 
 output "public_route_table_ids" {
@@ -43,6 +42,16 @@ output "public_subnets_cidr_blocks" {
   description = "List of cidr_blocks of public subnets"
   value       = compact(aws_subnet.public_subnets[*].cidr_block)
 }
+ 
+output "public_network_acl_id" {
+  description = "ID of the public network ACL"
+  value       = try(aws_network_acl.public[0].id, null)
+}
+
+output "public_network_acl_arn" {
+  description = "ARN of the public network ACL"
+  value       = try(aws_network_acl.public[0].arn, null)
+}
 
 output "private_subnets" {
   description = "List of IDs of private subnets"
@@ -65,6 +74,16 @@ output "private_subnets_cidr_blocks" {
 #   value       = aws_route_table.private_subnets[*].id
 # }
 # .////
+
+output "private_network_acl_id" {
+  description = "ID of the private network ACL"
+  value       = try(aws_network_acl.private[0].id, null)
+}
+
+output "private_network_acl_arn" {
+  description = "ARN of the private network ACL"
+  value       = try(aws_network_acl.private[0].arn, null)
+}
 
 output "private_nat_gateway_route_ids" {
   description = "List of IDs of the private nat gateway route"

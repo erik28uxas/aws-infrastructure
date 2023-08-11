@@ -43,6 +43,15 @@ output "public_subnets_cidr_blocks" {
   value       = module.vpc.public_subnets_cidr_blocks
 }
 
+output "public_network_acl_id" {
+  description = "ID of the public network ACL"
+  value       = module.vpc.public_network_acl_id
+}
+
+output "public_network_acl_arname" {
+  description = "ARN of the public network ACL"
+  value       = module.vpc.public_network_acl_arn
+}
 output "private_subnets" {
   description = "List of IDs of private subnets"
   value       = module.vpc.private_subnets
@@ -57,6 +66,17 @@ output "private_subnets_cidr_blocks" {
   description = "List of cidr_blocks of private subnets"
   value       = module.vpc.private_subnets_cidr_blocks
 }
+
+ooutput "private_network_acl_id" {
+  description = "ID of the private network ACL"
+  value       = module.vpc.private_network_acl_id
+}
+
+output "private_network_acl_arn" {
+  description = "ARN of the private network ACL"
+  value       = module.vpc.private_network_acl_arn
+}
+
  ##########
 
  output "private_nat_gateway_route_ids" {
