@@ -136,7 +136,7 @@ resource "aws_network_acl" "public" {
 }
 
 resource "aws_network_acl_rule" "public_inbound" {
-  count = lenght(var.public_subnet_cidrs) && var.public_dedicated_network_acl ? length(var.public_inbound_acl_rules) : 0
+  count = length(var.public_subnet_cidrs) && var.public_dedicated_network_acl ? length(var.public_inbound_acl_rules) : 0
 
   network_acl_id = aws_network_acl.public[0].id
 
