@@ -67,7 +67,7 @@ output "private_subnets_cidr_blocks" {
   value       = module.vpc.private_subnets_cidr_blocks
 }
 
-ooutput "private_network_acl_id" {
+output "private_network_acl_id" {
   description = "ID of the private network ACL"
   value       = module.vpc.private_network_acl_id
 }
