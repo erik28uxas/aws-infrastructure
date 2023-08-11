@@ -94,9 +94,9 @@ resource "aws_route" "public_internet_gateway" {
 
 # ========  Public Subnets  ========
 
-# locals {
-#   create_public_subnets = local.create_vpc && local.len_public_subnets > 0
-# }
+locals {
+  create_public_subnets = local.create_vpc && local.len_public_subnets > 0
+}
 
 resource "aws_subnet" "public_subnets" {
   count = local.create_vpc && length(var.public_subnet_cidrs) > 0 && (false == var.one_nat_gateway_per_az || length(var.public_subnet_cidrs) >= length(var.azs)) ? length(var.public_subnet_cidrs) : 0
@@ -136,7 +136,7 @@ resource "aws_network_acl" "public" {
 }
 
 resource "aws_network_acl_rule" "public_inbound" {
-  count = length(var.public_subnet_cidrs) && var.public_dedicated_network_acl ? length(var.public_inbound_acl_rules) : 0
+  count = local.create_public_subnets && var.public_dedicated_network_acl ? length(var.public_inbound_acl_rules) : 0
 
   network_acl_id = aws_network_acl.public[0].id
 
@@ -169,8 +169,12 @@ resource "aws_network_acl_rule" "public_outbound" {
 
 
 # ========  Private Subnets  ========
+# locals {
+#   create_private_subnets = local.create_vpc && local.len_private_subnets > 0
+# }
+
 locals {
-  create_private_subnets = local.create_vpc && local.len_private_subnets > 0
+  create_private_subnets = local.create_vpc && length(var.private_subnets_cidr_blocks) > 0
 }
 
 resource "aws_subnet" "private_subnets" {
@@ -195,7 +199,7 @@ resource "aws_subnet" "private_subnets" {
 }
 
 locals {
-  create_private_network_acl = count(var.private_subnet_cidrs) && var.private_dedicated_network_acl
+  create_private_network_acl = length(var.private_subnet_cidrs) && var.private_dedicated_network_acl
 }
 
 resource "aws_network_acl" "private" {
