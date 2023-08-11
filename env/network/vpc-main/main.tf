@@ -71,7 +71,7 @@ module "vpc" {
 #   private_subnet_names = "Main Private Subnet"
 
   private_subnet_tags = {
-    Name = "Main VPC public subnet" 
+    Name = "Main VPC private subnet" 
   }
 
   private_subnet_tags_per_az = {
