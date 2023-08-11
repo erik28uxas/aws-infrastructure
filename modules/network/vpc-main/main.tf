@@ -93,6 +93,11 @@ resource "aws_route" "public_internet_gateway" {
 }
 
 # ========  Public Subnets  ========
+
+# locals {
+#   create_public_subnets = local.create_vpc && local.len_public_subnets > 0
+# }
+
 resource "aws_subnet" "public_subnets" {
   count = local.create_vpc && length(var.public_subnet_cidrs) > 0 && (false == var.one_nat_gateway_per_az || length(var.public_subnet_cidrs) >= length(var.azs)) ? length(var.public_subnet_cidrs) : 0
 
@@ -131,7 +136,7 @@ resource "aws_network_acl" "public" {
 }
 
 resource "aws_network_acl_rule" "public_inbound" {
-  count = var.public_subnet_cidrs && var.public_dedicated_network_acl ? length(var.public_inbound_acl_rules) : 0
+  count = lenght(var.public_subnet_cidrs) && var.public_dedicated_network_acl ? length(var.public_inbound_acl_rules) : 0
 
   network_acl_id = aws_network_acl.public[0].id
 
