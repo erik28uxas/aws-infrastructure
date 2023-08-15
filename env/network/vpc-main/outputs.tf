@@ -133,10 +133,10 @@ output "database_subnets_cidr_blocks" {
   value       = module.vpc.database_subnets_cidr_blocks
 }
 
-output "database_route_table_ids" {
-  description = "List of IDs of database route tables"
-  value       = module.vpc.database_route_table_ids
-}
+# output "database_route_table_ids" {
+#   description = "List of IDs of database route tables"
+#   value       = module.vpc.database_route_table_ids
+# }
 
 output "database_internet_gateway_route_id" {
   description = "ID of the database internet gateway route"

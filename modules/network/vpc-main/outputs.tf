@@ -146,10 +146,10 @@ output "database_subnets_cidr_blocks" {
 #   value = length(aws_route_table.database[*].id) > 0 ? aws_route_table.database[*].id : aws_route_table.private[*].id
 # }
 
-output "database_internet_gateway_route_id" {
-  description = "ID of the database internet gateway route"
-  value       = try(aws_route.database_internet_gateway[0].id, null)
-}
+# output "database_internet_gateway_route_id" {
+#   description = "ID of the database internet gateway route"
+#   value       = try(aws_route.database_internet_gateway[0].id, null)
+# }
 
 output "database_nat_gateway_route_ids" {
   description = "List of IDs of the database nat gateway route"
