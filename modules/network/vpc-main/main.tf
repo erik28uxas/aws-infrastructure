@@ -253,6 +253,10 @@ resource "aws_network_acl_rule" "private_outbound" {
 
 
 # ========  Database Subnets  ========
+locals {
+  create_database_subnets     = local.create_vpc && local.len_database_subnets > 0
+  # create_database_route_table = local.create_database_subnets && var.create_database_subnet_route_table
+}
 resource "aws_subnet" "database" {
   count = local.create_database_subnets ? local.len_database_subnets : 0
 
