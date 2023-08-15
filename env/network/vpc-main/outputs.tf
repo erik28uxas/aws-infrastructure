@@ -148,7 +148,7 @@ output "database_nat_gateway_route_ids" {
   value       = module.vpc.database_nat_gateway_route_ids
 }
 
-output "database_route_table_association_ids" {
-  description = "List of IDs of the database route table association"
-  value       = module.vpc.database_route_table_association_ids
-}
+# output "database_route_table_association_ids" {
+#   description = "List of IDs of the database route table association"
+#   value       = module.vpc.database_route_table_association_ids
+# }

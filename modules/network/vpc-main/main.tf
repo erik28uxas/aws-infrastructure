@@ -2,12 +2,12 @@ locals {
   max_subnet_length = max(
     length(var.private_subnet_cidrs),
     length(var.public_subnet_cidrs),
-    length(var.database_subnets),
+    length(var.database_subnet_cidrs),
   )
 
   len_private_subnets  = max(length(var.private_subnet_cidrs))
   len_public_subnets   = max(length(var.public_subnet_cidrs))
-  len_database_subnets = max(length(var.database_subnets))
+  len_database_subnets = max(length(var.database_subnet_cidrs))
 
   nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length
   

@@ -140,11 +140,11 @@ output "database_subnets_cidr_blocks" {
   value       = compact(aws_subnet.database[*].cidr_block)
 }
 
-output "database_route_table_ids" {
-  description = "List of IDs of database route tables"
-  # Refer to https://github.com/terraform-aws-modules/terraform-aws-vpc/pull/926 before changing logic
-  value = length(aws_route_table.database[*].id) > 0 ? aws_route_table.database[*].id : aws_route_table.private[*].id
-}
+# output "database_route_table_ids" {
+#   description = "List of IDs of database route tables"
+#   # Refer to https://github.com/terraform-aws-modules/terraform-aws-vpc/pull/926 before changing logic
+#   value = length(aws_route_table.database[*].id) > 0 ? aws_route_table.database[*].id : aws_route_table.private[*].id
+# }
 
 output "database_internet_gateway_route_id" {
   description = "ID of the database internet gateway route"
@@ -156,7 +156,7 @@ output "database_nat_gateway_route_ids" {
   value       = aws_route.database_nat_gateway[*].id
 }
 
-output "database_route_table_association_ids" {
-  description = "List of IDs of the database route table association"
-  value       = aws_route_table_association.database[*].id
-}
+# output "database_route_table_association_ids" {
+#   description = "List of IDs of the database route table association"
+#   value       = aws_route_table_association.database[*].id
+# }
