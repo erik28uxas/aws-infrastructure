@@ -87,7 +87,7 @@ module "vpc" {
     }
   }
 
-
+  
   # database_tags_per_az = {
   #   "${local.region}a" = {
   #     "availability-zone" = "${local.region}a"
