@@ -88,17 +88,17 @@ module "vpc" {
   }
 
 
-  database_tags_per_az = {
-    "${local.region}a" = {
-      "availability-zone" = "${local.region}a"
-    }
-    "${local.region}b" = {
-      "availability-zone" = "${local.region}b"
-    }
-    "${local.region}c" = {
-      "availability-zone" = "${local.region}c"
-    }
-  }
+  # database_tags_per_az = {
+  #   "${local.region}a" = {
+  #     "availability-zone" = "${local.region}a"
+  #   }
+  #   "${local.region}b" = {
+  #     "availability-zone" = "${local.region}b"
+  #   }
+  #   "${local.region}c" = {
+  #     "availability-zone" = "${local.region}c"
+  #   }
+  # }
 
 
   vpc_tags = {
