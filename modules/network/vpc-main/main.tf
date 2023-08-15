@@ -9,7 +9,7 @@ locals {
   len_public_subnets   = max(length(var.public_subnet_cidrs))
   len_database_subnets = max(length(var.database_subnet_cidrs))
 
-  nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length
+  
   
   # Use `local.vpc_id` to give a hint to Terraform that subnets should be deleted before secondary CIDR blocks can be free!
   vpc_id = try(aws_vpc_ipv4_cidr_block_association.main[0].vpc_id, aws_vpc.main_vpc[0].id, "")
@@ -255,7 +255,7 @@ resource "aws_network_acl_rule" "private_outbound" {
 # ========  Database Subnets  ========
 locals {
   create_database_subnets     = local.create_vpc && local.len_database_subnets > 0
-  # create_database_route_table = local.create_database_subnets && var.create_database_subnet_route_table
+  create_database_route_table = local.create_database_subnets && var.create_database_subnet_route_table
 }
 resource "aws_subnet" "database" {
   count = local.create_database_subnets ? local.len_database_subnets : 0
@@ -278,8 +278,25 @@ resource "aws_subnet" "database" {
   )
 }
 
+resource "aws_db_subnet_group" "database" {
+  count = local.create_database_subnets && var.create_database_subnet_group ? 1 : 0
+
+  name        = lower(coalesce(var.database_subnet_group_name, var.name))
+  description = "Database subnet group for ${var.name}"
+  subnet_ids  = aws_subnet.database[*].id
+
+  tags = merge(
+    {
+      "Name" = lower(coalesce(var.database_subnet_group_name, var.name))
+    },
+    var.tags,
+    var.database_subnet_group_tags,
+  )
+}
+
 resource "aws_route_table" "database" {
-  count = local.create_vpc && local.max_subnet_length > 0 ? local.nat_gateway_count : 0
+  count = local.create_database_route_table ? var.single_nat_gateway || var.create_database_internet_gateway_route ? 1 : local.len_database_subnets : 0
+  # count = local.create_vpc && local.max_subnet_length > 0 ? local.nat_gateway_count : 0
   
   vpc_id = local.vpc_id
 
@@ -295,26 +312,33 @@ resource "aws_route_table" "database" {
   )
 }
 
-resource "aws_route" "database_nat_gateway" {
-  count = local.create_vpc && var.enable_nat_gateway ? local.nat_gateway_count : 0
-
-  route_table_id         = element(aws_route_table.private[*].id, count.index)
-  destination_cidr_block = var.nat_gateway_destination_cidr_block
-  nat_gateway_id         = element(aws_nat_gateway.main[*].id, count.index)  
+resource "aws_route_table_association" "database" {
+  # count = local.create_vpc && length(var.public_subnet_cidrs) > 0 ? length(var.public_subnet_cidrs) : 0
+  count = local.create_database_subnets ? local.len_database_subnets : 0
+  
+  subnet_id      = element(aws_subnet.database[*].id, count.index) 
+  # route_table_id = element(aws_route_table.database[*].id, var.single_nat_gateway ? 0 : count.index)
+  route_table_id = element(
+    coalescelist(aws_route_table.database[*].id, aws_route_table.private[*].id),
+    var.create_database_subnet_route_table ? var.single_nat_gateway || var.create_database_internet_gateway_route ? 0 : count.index : count.index,
+  )
 }
 
-resource "aws_route_table_association" "database" {
-  count = local.create_vpc && length(var.public_subnet_cidrs) > 0 ? length(var.public_subnet_cidrs) : 0
+resource "aws_route" "database_nat_gateway" {
+  count = local.create_vpc && var.enable_nat_gateway ? local.nat_gateway_count : 0
+  # count = local.create_database_route_table && !var.create_database_internet_gateway_route && var.create_database_nat_gateway_route && var.enable_nat_gateway ? var.single_nat_gateway ? 1 : local.len_database_subnets : 0
 
-  subnet_id      = element(aws_subnet.database[*].id, count.index) 
-  route_table_id = element(aws_route_table.database[*].id, var.single_nat_gateway ? 0 : count.index)
+  route_table_id         = element(aws_route_table.database[*].id, count.index)
+  destination_cidr_block = var.nat_gateway_destination_cidr_block
+  nat_gateway_id         = element(aws_nat_gateway.main[*].id, count.index)  
 }
 
 
 
 # ========  NAT Gateway  ========
 locals {
-  nat_gateway_ips = var.reuse_nat_ips ? var.external_nat_ip_ids : try(aws_eip.nat[*].id, [])
+  nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length
+  nat_gateway_ips   = var.reuse_nat_ips ? var.external_nat_ip_ids : try(aws_eip.nat[*].id, [])
 }
 
 resource "aws_eip" "nat" {
@@ -370,13 +394,6 @@ resource "aws_route_table_association" "private" {
   subnet_id      = element(aws_subnet.private_subnets[*].id, count.index) 
   route_table_id = element(aws_route_table.private[*].id, var.single_nat_gateway ? 0 : count.index)
 }
-
-
-
-
-
-
-
 
 
 resource "aws_route_table_association" "public" {
