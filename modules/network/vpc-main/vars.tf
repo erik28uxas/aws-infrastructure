@@ -206,6 +206,41 @@ variable "private_acl_tags" {
   default     = {}
 }
 
+# ====== Database Subnet, NACL ======
+
+variable "database_subnet_cidrs" {
+  description = "Database Subnets CIDRs"
+  type        = list(string)
+  default     = []
+}
+
+variable "database_subnet_names" {
+  description = "Explicit values to use in the Name tag on database subnets. If empty, Name tags are generated"
+  type        = list(string)
+  default     = []
+}
+
+variable "database_subnet_suffix" {
+  description = "Suffix to append to database subnets name"
+  type        = string
+  default     = "db"
+}
+
+variable "database_route_table_tags" {
+  description = "Additional tags for the database route tables"
+  type        = map(string)
+  default     = {}
+}
+
+variable "database_subnet_tags" {
+  description = "Additional tags for the database subnets"
+  type        = map(string)
+  default     = {}
+}
+
+
+
+
 # ====== Others ======
 variable "default_cidr" {
   description = "Value of CIDR to the world"

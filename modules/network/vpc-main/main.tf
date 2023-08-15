@@ -1,12 +1,13 @@
 locals {
   max_subnet_length = max(
     length(var.private_subnet_cidrs),
-    # length(var.database_subnets),
+    length(var.public_subnet_cidrs),
+    length(var.database_subnets),
   )
 
   len_private_subnets  = max(length(var.private_subnet_cidrs))
   len_public_subnets   = max(length(var.public_subnet_cidrs))
-  # len_database_subnets = max(length(var.database_subnets))
+  len_database_subnets = max(length(var.database_subnets))
 
   nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.azs) : local.max_subnet_length
   
@@ -98,7 +99,6 @@ resource "aws_route" "public_internet_gateway" {
 }
 
 # ========  Public Subnets  ========
-
 locals {
   create_public_subnets = local.create_vpc && local.len_public_subnets > 0
 }
@@ -124,8 +124,7 @@ resource "aws_subnet" "public_subnets" {
     lookup(var.public_subnet_tags_per_az, element(var.azs, count.index), {})
   )
 }
-# ====================================
-# =========    NACL =========
+# ========= Public - NACL =========
 
 resource "aws_network_acl" "public" {
   count = local.create_public_subnets && var.public_dedicated_network_acl ? 1 : 0
@@ -199,6 +198,8 @@ resource "aws_subnet" "private_subnets" {
   )
 }
 
+# ========= Private - NACL =========
+
 locals {
   create_private_network_acl = local.create_private_subnets && var.private_dedicated_network_acl
 }
@@ -248,6 +249,60 @@ resource "aws_network_acl_rule" "private_outbound" {
   protocol        = var.private_outbound_acl_rules[count.index]["protocol"]
   cidr_block      = lookup(var.private_outbound_acl_rules[count.index], "cidr_block", null)
   ipv6_cidr_block = lookup(var.private_outbound_acl_rules[count.index], "ipv6_cidr_block", null)
+}
+
+
+# ========  Database Subnets  ========
+resource "aws_subnet" "database" {
+  count = local.create_database_subnets ? local.len_database_subnets : 0
+
+  vpc_id               = local.vpc_id
+  cidr_block           = element(concat(var.database_subnet_cidrs, [""]), count.index)
+  availability_zone    = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
+  availability_zone_id = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null  
+
+  tags = merge(
+    {
+      Name = try(
+        var.database_subnet_names[count.index],
+        format("${var.name}-${var.database_subnet_suffix}-%s", element(var.azs, count.index), )
+      )
+    },
+    var.tags,
+    var.database_subnet_tags,
+  )
+}
+
+resource "aws_route_table" "database" {
+  count = local.create_vpc && local.max_subnet_length > 0 ? local.nat_gateway_count : 0
+  
+  vpc_id = local.vpc_id
+
+  tags = merge(
+    {
+      "Name" = var.single_nat_gateway ? "${var.name}-${var.database_subnet_suffix}" : format(
+        "${var.name}-${var.database_subnet_suffix}-%s",
+        element(var.azs, count.index),
+      )
+    },
+    var.tags,
+    var.database_route_table_tags,
+  )
+}
+
+resource "aws_route" "database_nat_gateway" {
+  count = local.create_vpc && var.enable_nat_gateway ? local.nat_gateway_count : 0
+
+  route_table_id         = element(aws_route_table.private[*].id, count.index)
+  destination_cidr_block = var.nat_gateway_destination_cidr_block
+  nat_gateway_id         = element(aws_nat_gateway.main[*].id, count.index)  
+}
+
+resource "aws_route_table_association" "database" {
+  count = local.create_vpc && length(var.public_subnet_cidrs) > 0 ? length(var.public_subnet_cidrs) : 0
+
+  subnet_id      = element(aws_subnet.database[*].id, count.index) 
+  route_table_id = element(aws_route_table.database[*].id, var.single_nat_gateway ? 0 : count.index)
 }
 
 
@@ -309,6 +364,13 @@ resource "aws_route_table_association" "private" {
   subnet_id      = element(aws_subnet.private_subnets[*].id, count.index) 
   route_table_id = element(aws_route_table.private[*].id, var.single_nat_gateway ? 0 : count.index)
 }
+
+
+
+
+
+
+
 
 
 resource "aws_route_table_association" "public" {
