@@ -310,6 +310,18 @@ resource "aws_route_table_association" "database" {
   route_table_id = element(aws_route_table.database[*].id, var.single_nat_gateway ? 0 : count.index)
 }
 
+resource "aws_route" "database_nat_gateway" {
+  count = local.create_database_route_table && !var.create_database_internet_gateway_route && var.create_database_nat_gateway_route && var.enable_nat_gateway ? var.single_nat_gateway ? 1 : local.len_database_subnets : 0
+
+  route_table_id         = element(aws_route_table.database[*].id, count.index)
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = element(aws_nat_gateway.main[*].id, count.index)
+
+  timeouts {
+    create = "5m"
+  }
+}
+
 
 # ========  NAT Gateway  ========
 locals {
