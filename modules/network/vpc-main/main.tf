@@ -261,6 +261,7 @@ resource "aws_subnet" "database" {
   availability_zone    = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
   availability_zone_id = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null  
 
+
   tags = merge(
     {
       Name = try(
