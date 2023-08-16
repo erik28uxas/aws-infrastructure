@@ -209,14 +209,6 @@ resource "aws_route_table" "private" {
   )
 }
 
-resource "aws_route" "public_internet_gateway" {
-  count = local.create_vpc && var.create_igw && length(var.public_subnet_cidrs) > 0 ? 1 : 0
-
-  route_table_id         = aws_route_table.public_subnets[0].id
-  destination_cidr_block = var.default_cidr
-  gateway_id             = aws_internet_gateway.vpc_gw[0].id
-}
-
 resource "aws_route_table_association" "private" {
   count = local.create_private_subnets ? local.len_private_subnets : 0
   
