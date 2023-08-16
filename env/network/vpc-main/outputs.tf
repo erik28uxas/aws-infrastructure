@@ -20,16 +20,15 @@ output "vpc_id" {
   value       = module.vpc.vpc_id
 }
 
-# output "vpc_arn" {
-#   description = "The ARN of the VPC"
-#   value       = try(aws_vpc.main[0].arn, null)
-# }
-
 output "vpc_cidr" {
   description = "The ID of the VPC"
   value       = module.vpc.vpc_cidr
 }
 
+output "vpc_arn" {
+  description = "The ARN of the VPC"
+  value       = try(aws_vpc.main_vpc[0].arn, null)
+}
 
 # =============
 # ==== IGW ====

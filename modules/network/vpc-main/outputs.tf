@@ -31,15 +31,10 @@ output "vpc_cidr" {
   value       = try(aws_vpc.main_vpc[0].cidr_block, "")
 }
 
-# output "vpc_arn" {
-#   description = "The ARN of the VPC"
-#   value       = aws_vpc.main_vpc.arn
-# }
-
-# output "vpc_cidr" {
-#   description = "The ID of the VPC"
-#   value       = aws_vpc.main_vpc.cidr_block
-# }
+output "vpc_arn" {
+  description = "The ARN of the VPC"
+  value       = try(aws_vpc.main_vpc[0].arn, "")
+}
 
 
 # =============
