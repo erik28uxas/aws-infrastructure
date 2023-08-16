@@ -31,15 +31,6 @@ resource "aws_vpc" "main_vpc" {
   )
 }
 
-resource "aws_vpc_ipv4_cidr_block_association" "main" {
-  count = local.create_vpc && length(var.secondary_cidr_blocks) > 0 ? length(var.secondary_cidr_blocks) : 0
-
-  # Do not turn this into `local.vpc_id`
-  vpc_id = aws_vpc.main_vpc[0].id
-
-  cidr_block = element(var.secondary_cidr_blocks, count.index)
-}
-
 
 # ========  Internet GW  ========
 resource "aws_internet_gateway" "vpc_gw" {
@@ -192,7 +183,7 @@ resource "aws_subnet" "private_subnets" {
 }
 
 # ========  Route Table for Private Subnets  ========
-resource "aws_route_table" "private" {
+resource "aws_route_table" "private_subnets" {
   count = local.create_private_subnets && local.max_subnet_length > 0 ? local.nat_gateway_count : 0 
   
   vpc_id = local.vpc_id
@@ -215,7 +206,7 @@ resource "aws_route_table_association" "private" {
   count = local.create_private_subnets ? local.len_private_subnets : 0
   
   subnet_id      = element(aws_subnet.private_subnets[*].id, count.index) 
-  route_table_id = element(aws_route_table.private[*].id, var.single_nat_gateway ? 0 : count.index)
+  route_table_id = element(aws_route_table.private_subnets[*].id, var.single_nat_gateway ? 0 : count.index)
 }
 
 # ========= Private NACL =========
@@ -283,7 +274,7 @@ resource "aws_subnet" "database" {
   count = local.create_database_subnets ? local.len_database_subnets : 0
 
   vpc_id               = local.vpc_id
-  cidr_block           = element(var.database_subnet_cidrs, count.index)
+  cidr_block           = element(var.database_subnets, count.index)
   availability_zone    = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
   availability_zone_id = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null
 
