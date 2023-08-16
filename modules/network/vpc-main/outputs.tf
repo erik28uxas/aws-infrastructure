@@ -23,17 +23,17 @@ output "name" {
 # =============
 output "vpc_id" {
   description = "The ID of the VPC"
-  value       = try(aws_vpc.main_vpc[0].id, "")
+  value       = aws_vpc.main_vpc.id
 }
 
 output "vpc_arn" {
   description = "The ARN of the VPC"
-  value       = try(aws_vpc.main_vpc[0].arn, "")
+  value       = aws_vpc.main_vpc.arn
 }
 
 output "vpc_cidr" {
   description = "The ID of the VPC"
-  value       = try(aws_vpc.main_vpc[0].cidr_block, "")
+  value       = aws_vpc.main_vpc.cidr_block
 }
 
 
