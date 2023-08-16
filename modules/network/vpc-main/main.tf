@@ -338,7 +338,7 @@ resource "aws_route_table_association" "database" {
 
   subnet_id = element(aws_subnet.database[*].id, count.index)
   route_table_id = element(
-    coalescelist(aws_route_table.database[*].id, aws_route_table.private[*].id),
+    coalescelist(aws_route_table.database[*].id, aws_route_table.private_subnets[*].id),
     var.create_database_subnet_route_table ? var.single_nat_gateway || var.create_database_internet_gateway_route ? 0 : count.index : count.index,
   )
 }
@@ -360,7 +360,7 @@ resource "aws_route" "database_nat_gateway" {
 
   route_table_id         = element(aws_route_table.database[*].id, count.index)
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = element(aws_nat_gateway.vpc_gw[*].id, count.index)
+  nat_gateway_id         = element(aws_nat_gateway.main[*].id, count.index)
 
   timeouts {
     create = "5m"
