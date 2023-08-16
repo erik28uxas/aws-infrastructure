@@ -28,7 +28,7 @@ output "vpc_id" {
 
 output "vpc_arn" {
   description = "The ARN of the VPC"
-  value       = try(aws_vpc.main[0].arn, null)
+  value       = try(aws_vpc.main_vpc[0].arn, "")
 }
 
 output "vpc_cidr" {
@@ -154,6 +154,12 @@ output "database_subnet_arns" {
 output "database_subnets_cidr_blocks" {
   description = "List of cidr_blocks of database subnets"
   value       = compact(aws_subnet.database[*].cidr_block)
+}
+
+variable "database_subnet_names" {
+  description = "Explicit values to use in the Name tag on database subnets. If empty, Name tags are generated"
+  type        = list(string)
+  default     = []
 }
 
 output "database_subnet_group" {

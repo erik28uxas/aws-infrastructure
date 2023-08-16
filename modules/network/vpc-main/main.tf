@@ -348,7 +348,7 @@ resource "aws_route" "database_internet_gateway" {
 
   route_table_id         = aws_route_table.database[0].id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.this[0].id
+  gateway_id             = aws_internet_gateway.vpc_gw[0].id
 
   timeouts {
     create = "5m"
@@ -360,7 +360,7 @@ resource "aws_route" "database_nat_gateway" {
 
   route_table_id         = element(aws_route_table.database[*].id, count.index)
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = element(aws_nat_gateway.this[*].id, count.index)
+  nat_gateway_id         = element(aws_nat_gateway.vpc_gw[*].id, count.index)
 
   timeouts {
     create = "5m"
@@ -467,7 +467,7 @@ resource "aws_nat_gateway" "main" {
 resource "aws_route" "private_nat_gateway" {
   count = local.create_vpc && var.enable_nat_gateway ? local.nat_gateway_count : 0
 
-  route_table_id         = element(aws_route_table.private[*].id, count.index)
+  route_table_id         = element(aws_route_table.private_subnets[*].id, count.index)
   destination_cidr_block = var.nat_gateway_destination_cidr_block
   nat_gateway_id         = element(aws_nat_gateway.main[*].id, count.index)
   
