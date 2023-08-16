@@ -322,6 +322,7 @@ variable "database_acl_tags" {
   default     = {}
 }
 
+
 # ==== Logic ====
 variable "create_database_subnet_route_table" {
   description = "Controls if separate route table for database should be created"
@@ -340,6 +341,7 @@ variable "create_database_nat_gateway_route" {
   type        = bool
   default     = false
 }
+
 
 # ====== Tags and Names Database Subnet ======
 variable "database_subnets" {

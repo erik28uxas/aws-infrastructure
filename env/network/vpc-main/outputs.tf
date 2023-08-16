@@ -30,6 +30,7 @@ output "vpc_arn" {
   value       = module.vpc.vpc_arn
 }
 
+
 # =============
 # ==== IGW ====
 # =============
@@ -130,6 +131,7 @@ output "private_network_acl_arn" {
   description = "ARN of the private network ACL"
   value       = module.vpc.private_network_acl_arn
 }
+
 
 # =========================
 # ==== Database Subnet ====

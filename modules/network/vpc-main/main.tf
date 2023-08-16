@@ -15,7 +15,10 @@ locals {
   create_vpc = var.create_vpc
 }
 
+
+# =======================
 # ========  VPC  ========
+# =======================
 resource "aws_vpc" "main_vpc" {
   count = local.create_vpc ? 1 : 0
 
@@ -40,7 +43,9 @@ resource "aws_vpc_ipv4_cidr_block_association" "main" {
   cidr_block = element(var.secondary_cidr_blocks, count.index)
 }
 
+# ===============================
 # ========  Internet GW  ========
+# ===============================
 resource "aws_internet_gateway" "vpc_gw" {
   count = local.create_vpc && var.create_igw && length(var.public_subnet_cidrs) > 0 ? 1 : 0
 
@@ -52,6 +57,7 @@ resource "aws_internet_gateway" "vpc_gw" {
     var.igw_tags,
   )
 }
+
 
 # ==================================
 # ========  Public Subnets  ========
@@ -115,7 +121,6 @@ resource "aws_route" "public_internet_gateway" {
 }
 
 # ========= Public NACL =========
-
 resource "aws_network_acl" "public" {
   count = local.create_public_subnets && var.public_dedicated_network_acl ? 1 : 0
 
@@ -207,8 +212,6 @@ resource "aws_route_table" "private_subnets" {
     var.private_route_table_tags,
   )
 }
-
-
 
 resource "aws_route_table_association" "private" {
   count = local.create_private_subnets ? local.len_private_subnets : 0
@@ -418,6 +421,7 @@ resource "aws_network_acl_rule" "database_outbound" {
   cidr_block      = lookup(var.database_outbound_acl_rules[count.index], "cidr_block", null)
   ipv6_cidr_block = lookup(var.database_outbound_acl_rules[count.index], "ipv6_cidr_block", null)
 }
+
 
 # ===============================
 # ========  NAT Gateway  ========
