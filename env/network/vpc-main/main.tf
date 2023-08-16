@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 0.13.1"
+  required_version = ">= 1.0"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.73"
+      version = ">= 5.0"
     }
   }
 }
@@ -37,9 +37,10 @@ module "vpc" {
 
   vpc_cidr = "10.0.0.0/16"
 
-  azs                  = ["${local.region}a", "${local.region}b", "${local.region}c"]
-  public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  private_subnet_cidrs = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  azs                   = ["${local.region}a", "${local.region}b", "${local.region}c"]
+  public_subnet_cidrs   = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  private_subnet_cidrs  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  database_subnet_cidrs = ["10.0.7.0/24", "10.0.8.0/24"]
 
 
   enable_nat_gateway     = true
@@ -67,8 +68,6 @@ module "vpc" {
       "availability-zone" = "${local.region}c"
     }
   }
-  
-#   private_subnet_names = "Main Private Subnet"
 
   private_subnet_tags = {
     Name = "Main VPC private subnet" 
@@ -87,7 +86,6 @@ module "vpc" {
   }
 
 
-
   vpc_tags = {
     Name = "Main VPC"
   }
@@ -96,19 +94,6 @@ module "vpc" {
     Name = "Main VPC IGW"
   }
 
-  # nat_eip_tags = {
-  #   Info = "EIP-in-${local.region}a"
-  #   Info = "EIP-in-${local.region}b"
-  #   Info = "EIP-in-${local.region}c"
-  # }
-
-  # nat_gateway_tags = {
-  #   Info = "NAT-GW-for-${local.region}a"
-  #   Info = "NAT-GW-for-${local.region}b"
-  #   Info = "NAT-GW-for-${local.region}c"
-
-  # }
 
   tags = local.tags
-
 }
