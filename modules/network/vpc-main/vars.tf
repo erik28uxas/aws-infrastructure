@@ -342,7 +342,7 @@ variable "create_database_nat_gateway_route" {
 }
 
 # ====== Tags and Names Database Subnet ======
-variable "database_subnes" {
+variable "database_subnets" {
   description = "Explicit values to use in the Name tag on database subnets. If empty, Name tags are generated"
   type        = list(string)
   default     = []
