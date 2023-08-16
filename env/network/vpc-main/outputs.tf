@@ -27,7 +27,7 @@ output "vpc_cidr" {
 
 output "vpc_arn" {
   description = "The ARN of the VPC"
-  value       = try(aws_vpc.main_vpc[0].arn, null)
+  value       = module.vpc.vpc_arn
 }
 
 # =============
