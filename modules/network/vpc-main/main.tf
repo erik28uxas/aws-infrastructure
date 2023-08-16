@@ -43,6 +43,7 @@ resource "aws_vpc_ipv4_cidr_block_association" "main" {
   cidr_block = element(var.secondary_cidr_blocks, count.index)
 }
 
+
 # ===============================
 # ========  Internet GW  ========
 # ===============================
