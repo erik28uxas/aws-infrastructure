@@ -104,11 +104,11 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_route" "public_internet_gateway" {
-  count = local.create_public_subnets && var.create_igw ? 1 : 0
+  count = local.create_vpc && var.create_igw && length(var.public_subnet_cidrs) > 0 ? 1 : 0
 
-  route_table_id         = aws_route_table.public[0].id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.this[0].id
+  route_table_id         = aws_route_table.public_subnets[0].id
+  destination_cidr_block = var.default_cidr
+  gateway_id             = aws_internet_gateway.vpc_gw[0].id
 
   timeouts {
     create = "5m"
@@ -208,6 +208,8 @@ resource "aws_route_table" "private" {
     var.private_route_table_tags,
   )
 }
+
+
 
 resource "aws_route_table_association" "private" {
   count = local.create_private_subnets ? local.len_private_subnets : 0
