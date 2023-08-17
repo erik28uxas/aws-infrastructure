@@ -85,6 +85,15 @@ module "vpc" {
     }
   }
 
+  database_subnet_tags = {
+    Name = "Main VPC database subnet"
+  }
+
+
+
+
+
+
 
   vpc_tags = {
     Name = "Main VPC"
