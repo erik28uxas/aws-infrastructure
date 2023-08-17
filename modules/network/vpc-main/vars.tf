@@ -362,12 +362,6 @@ variable "database_subnet_tags" {
   default     = {}
 }
 
-# variable "database_subnet_names" {
-#   description = "Explicit values to use in the Name tag on database subnets. If empty, Name tags are generated"
-#   type        = list(string)
-#   default     = []
-# }
-
 variable "create_database_subnet_group" {
   description = "Controls if database subnet group should be created (n.b. database_subnets must also be set)"
   type        = bool
