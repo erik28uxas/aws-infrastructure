@@ -1,9 +1,9 @@
 --- |modules
-	|--	network
-	|	|--	vpc
-	|		|--	main.tf
-	|		|--	outputs.tf
-	|		|--	vars.tf
++	|--	network
++	|	|--	vpc
++	|		|--	main.tf
++	|		|--	outputs.tf
++	|		|--	vars.tf
 	|--	services
 	|	|--	appserver
 	|		|--	main.tf
