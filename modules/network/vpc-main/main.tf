@@ -7,7 +7,7 @@ locals {
 
   len_private_subnets  = max(length(var.private_subnet_cidrs))
   len_public_subnets   = max(length(var.public_subnet_cidrs))
-  len_database_subnets = max(length(var.database_subnets))
+  len_database_subnets = max(length(var.database_subnet_cidrs))
   
   # Use `local.vpc_id` to give a hint to Terraform that subnets should be deleted before secondary CIDR blocks can be free!
   vpc_id = try(aws_vpc_ipv4_cidr_block_association.main[0].vpc_id, aws_vpc.main_vpc[0].id, "")
@@ -286,7 +286,7 @@ resource "aws_subnet" "database" {
   count = local.create_database_subnets ? local.len_database_subnets : 0
 
   vpc_id               = local.vpc_id
-  cidr_block           = element(var.database_subnets, count.index)
+  cidr_block           = element(var.database_subnet_cidrs, count.index)
   availability_zone    = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
   availability_zone_id = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null
 
