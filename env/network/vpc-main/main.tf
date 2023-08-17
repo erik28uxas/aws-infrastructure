@@ -90,8 +90,7 @@ module "vpc" {
   }
 
 
-
-
+  database_subnet_group_name = "Main DB group"
 
 
 
