@@ -51,20 +51,20 @@
 
 
 ----------------------------
-global
-	s3-state
-		backend.tf
-		dynamodb.tf
-		main.tf
-		outputs.tf
-		vars.tfvars.tf
-		provider.tf
+--- |global
++   |--	s3-state
++	|	|--	backend.tf
+	|	|--	dynamodb.tf
++	|	|--	main.tf
++	|	|--	outputs.tf
+	|	|--	vars.tf
+	|	|--	provider.tf
 ----------------------------
 --- |enviorement
-	|--	network
-	|	|--	vpc
-	|		|--	main.tf
-	|		|--	outputs.tf
++	|--	network
++	|	|--	vpc
++	|		|--	main.tf
++	|		|--	outputs.tf
 	|--	services
 	|	|--	appserver
 	|		|--	main.tf
